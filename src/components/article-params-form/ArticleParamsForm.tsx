@@ -28,10 +28,16 @@ export const ArticleParamsForm = ({
 	appliedParams,
 	onApply,
 }: ArticleParamsFormProps) => {
+	// 🛡️ Рычаг управления панелью параметров: открыт бастион или запечатан
 	const [isFormOpen, setIsFormOpen] = useState(false);
+
+	// 🏰 Опорная точка бастиона — по ней определяется «внутри/снаружи»
 	const formRef = useRef<HTMLDivElement>(null);
+
+	// 📜 Черновик настроек. Изменяется в форме, но не влияет на статью до приказа.
 	const [formState, setFormState] = useState(appliedParams);
 
+	// 🗡️ Переключение заслона: открыть или закрыть по приказу
 	const toggleForm = () => {
 		setIsFormOpen(!isFormOpen);
 	};
@@ -47,6 +53,7 @@ export const ArticleParamsForm = ({
 		elementRef,
 		onClose,
 	}: UseCloseOnOutsideClickOrEsc) => {
+		// 🛡️ Караул периметра: закрыть бастион при вторжении снаружи или по Escape
 		useEffect(() => {
 			if (!isOpenElement) {
 				return;
@@ -82,24 +89,28 @@ export const ArticleParamsForm = ({
 		}, [isOpenElement, elementRef, onClose]);
 	};
 
+	// ⚔️ Устав закрытия: дисциплина клика и клавиши хранит порядок интерфейса
 	useCloseOnOutsideClickOrEsc({
 		isOpenElement: isFormOpen,
 		elementRef: formRef,
 		onClose: () => setIsFormOpen(false),
 	});
 
+	// ⚙️ Механикус изменения: единый рычаг для обновления любого поля догматов
 	const updateFormField = (field: keyof ArticleStateType) => {
 		return (value: OptionType) => {
 			setFormState({ ...formState, [field]: value });
 		};
 	};
 
+	// 🔥 Применение утверждённых настроек — передача приказа наверх и запечатывание панели
 	const handleApply = (event: React.FormEvent) => {
 		event.preventDefault();
 		onApply(formState);
 		setIsFormOpen(false);
 	};
 
+	// 📜 Возврат к канону: сброс к базовым догматам оформления
 	const handleReset = () => {
 		setFormState(defaultArticleState);
 		onApply(defaultArticleState);
@@ -108,6 +119,7 @@ export const ArticleParamsForm = ({
 	return (
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={toggleForm} />
+			{/* 🏰 Бастион параметров: укрепляется классами и держит строй по ref */}
 			<aside
 				className={clsx(styles.container, {
 					[styles.container_open]: isFormOpen,
